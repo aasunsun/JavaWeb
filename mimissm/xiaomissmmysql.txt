@@ -1,0 +1,161 @@
+搭建SSM项目的步骤
+1.新建maven工程
+2.修改目录，修改POM。xml文件
+3.添加SSM框架的所以依赖
+4.拷贝jdbc.porperties到resources目录下
+5.拷贝applicationContext_dao.xml文件，进行数据访问层的配置
+6.新建applicationContext_service.xml文件，进行业务逻辑层的配置
+7.新建springmvc。xml文件，配置springmvc的框架
+8.新建SqlMapConfig.xnl文件，进行分页插件的配置
+9.使用逆向工程生成pojo和mapper文件
+10.开发业务逻辑层，实现登录判断
+	
+
+
+
+
+
+
+
+
+
+
+
+-- 管理员表
+CREATE TABLE admin (
+  a_id int AUTO_INCREMENT PRIMARY KEY,
+  a_name varchar(20),
+  a_pass char(200)
+);
+-- 添加数据
+INSERT INTO admin(a_id,a_name,a_pass) VALUES(1, 'admin','123456');
+
+-- 商品类表
+CREATE TABLE product_type (
+  type_id int AUTO_INCREMENT PRIMARY KEY,
+  type_name varchar(20)
+);
+-- 添加数据
+INSERT INTO product_type(type_name) VALUES('手机');
+INSERT INTO product_type(type_name) VALUES('电脑');
+INSERT INTO product_type(type_name) VALUES('电视');
+
+-- 商品表
+CREATE TABLE product_info (
+  p_id int AUTO_INCREMENT PRIMARY KEY,
+  p_name varchar(20),
+  p_content char(200),
+	p_price int,
+	p_image varchar(200),
+	p_number int,
+	type_id int,
+	p_date date,
+	FOREIGN KEY(type_id) REFERENCES product_type(type_id)
+);
+-- 添加数据
+INSERT INTO product_info(p_name,p_content,p_price,p_image,p_number,type_id,p_date) VALUES ('小米Note2', '双曲面 黑色 6GB内存 64GB闪存', 2899, 'xmNote2.jpg', 500, 1, '2018-01-04');
+INSERT INTO product_info(p_name,p_content,p_price,p_image,p_number,type_id,p_date) VALUES ('红米Note4X', '5.5英寸 绿色 4GB内存 64GB闪存', 1299, 'hmNote4X.jpg', 500, 1, '2018-01-06');
+INSERT INTO product_info(p_name,p_content,p_price,p_image,p_number,type_id,p_date) VALUES ('红米4', '5英寸 金色 3GB内存 32GB闪存', 999, 'hm4.jpg', 500, 1, '2018-01-07');
+INSERT INTO product_info(p_name,p_content,p_price,p_image,p_number,type_id,p_date) VALUES ('红米4X', '5英寸 黑色 3GB内存 32GB闪存', 899, 'hm4X.jpg', 500, 1, '2018-01-08');
+INSERT INTO product_info(p_name,p_content,p_price,p_image,p_number,type_id,p_date) VALUES ('小米平板3', '7.9英寸 金色 4GB内存 64GB闪存', 1499, 'xmPad3.jpg', 500, 2, '2018-01-09');
+INSERT INTO product_info(p_name,p_content,p_price,p_image,p_number,type_id,p_date) VALUES ('小米Air12', '12.5英寸 银色 4GB内存 128GB闪存', 3599, 'xmAir12.jpg', 500, 2, '2018-01-18');
+INSERT INTO product_info(p_name,p_content,p_price,p_image,p_number,type_id,p_date) VALUES ('小米Air13', '13.3英寸 银色 8GB内存 256GB闪存', 4999, 'xmAir13.jpg', 500, 2, '2018-01-17');
+INSERT INTO product_info(p_name,p_content,p_price,p_image,p_number,type_id,p_date) VALUES ('小米Pro', '15.6英寸 灰色 16GB内存 256GB闪存', 6999, 'xmPro.jpg', 500, 2, '2018-01-16');
+INSERT INTO product_info(p_name,p_content,p_price,p_image,p_number,type_id,p_date) VALUES ('小米电视4', '49英寸 原装LG屏 3840×2160 真4K', 3299, 'xmTV4-49.jpg', 500, 3, '2018-01-15');
+INSERT INTO product_info(p_name,p_content,p_price,p_image,p_number,type_id,p_date) VALUES ('小米电视4', '55英寸 原装三星屏 3840×2160 真4K', 3999, 'xmTV4-55.jpg', 500, 3, '2018-01-13');
+INSERT INTO product_info(p_name,p_content,p_price,p_image,p_number,type_id,p_date) VALUES ('小米电视4', '65英寸 原装三星屏 3840×2160 真4K', 8999, 'xmTV4-65.jpg', 500, 3, '2018-01-22');
+INSERT INTO product_info(p_name,p_content,p_price,p_image,p_number,type_id,p_date) VALUES ('小米电视4A', '44英寸 FHD全高清屏 1920*1080', 1999, 'xmTV4A-43.jpg', 500, 3, '2018-01-11');
+INSERT INTO product_info(p_name,p_content,p_price,p_image,p_number,type_id,p_date) VALUES ('小米电视4A', '49英寸 FHD全高清屏 1920*1080', 2299, 'xmTV4A-49.jpg', 500, 3, '2018-01-21');
+INSERT INTO product_info(p_name,p_content,p_price,p_image,p_number,type_id,p_date) VALUES ('小米MIX2', '全陶瓷 黑色 8GB内存 128GB闪存', 4699, 'xmMIX2.jpg', 500, 1, '2018-04-01');
+INSERT INTO product_info(p_name,p_content,p_price,p_image,p_number,type_id,p_date) VALUES ('小米Note3', '全网通 蓝色 6GB内存 64GB闪存', 2499, 'xmNote3.jpg', 500, 1, '2018-03-01');
+INSERT INTO product_info(p_name,p_content,p_price,p_image,p_number,type_id,p_date) VALUES ('小米MAX2', '全金属 金色 4GB内存 64GB闪存', 1599, 'xmMAX2.jpg', 500, 1, '2018-01-02');
+INSERT INTO product_info(p_name,p_content,p_price,p_image,p_number,type_id,p_date) VALUES ('小米5X', '全金属 金色 4GB内存 64GB闪存', 1599, 'xm5X.jpg', 500, 1, '2018-01-03');
+
+-- 前台用户表
+CREATE TABLE users (
+  uid int NOT NULL AUTO_INCREMENT,
+  uname varchar(50) DEFAULT NULL,
+  upass VARBINARY(50) DEFAULT NULL,
+  ustatus int DEFAULT NULL,
+  ulevel int DEFAULT NULL,
+  score int DEFAULT NULL,
+  PRIMARY KEY (uid)
+);
+-- 添加用户数据
+INSERT INTO users(uname,upass,ustatus,ulevel,score) VALUES('zar',0x313233343536,0,0,0);
+INSERT INTO users(uname,upass,ustatus,ulevel,score) VALUES('zhangsan',0x313233343536,1,0,0);
+
+-- 地址表
+CREATE TABLE address (
+  addressId int NOT NULL AUTO_INCREMENT,
+  uid int DEFAULT NULL,
+  cnee varchar(50) DEFAULT NULL,
+  phone varchar(11) DEFAULT NULL,
+  address varchar(100) DEFAULT NULL,
+  PRIMARY KEY (addressId),
+  KEY FK_Reference_1 (uid),
+  CONSTRAINT FK_Reference_1 FOREIGN KEY (uid) REFERENCES users (uid)
+);
+-- 添加数据
+INSERT INTO address VALUES (1, 1, 'zar', '15266676667', '北京海淀甲骨文');
+INSERT INTO address VALUES (2, 1, 'oracle', '15266678888', '北京朝阳科技文化一条街');
+INSERT INTO address VALUES (3, 2, '张三', '15290888162', '北京大兴西红门');
+
+-- 购物车表
+CREATE TABLE carshop (
+  cid int NOT NULL AUTO_INCREMENT,
+  uid int DEFAULT NULL,
+  pid int DEFAULT NULL,
+  numbers int DEFAULT NULL,
+  PRIMARY KEY (cid),
+  KEY FK_Reference_3 (uid),
+  KEY FK_Reference_4 (pid),
+	CONSTRAINT FK_Reference_4 FOREIGN KEY (pid) REFERENCES product_info (p_id),
+  CONSTRAINT FK_Reference_3 FOREIGN KEY (uid) REFERENCES users (uid)
+);
+-- 添加数据
+INSERT INTO carshop VALUES (1, 1, 1, 2);
+DROP TABLE carshop;
+
+-- 订单表
+CREATE TABLE xmorder (
+  oid CHAR(32) NOT NULL,
+  uid INT DEFAULT NULL,
+  addressId INT DEFAULT NULL,
+  totalprice DOUBLE(10,2) DEFAULT NULL,
+  remarks VARCHAR(200) DEFAULT NULL,
+  STATUS VARCHAR(6) DEFAULT NULL,
+  odate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (oid),
+  KEY FK_Reference_5 (uid),
+  KEY FK_Reference_6 (addressId),
+  CONSTRAINT FK_Reference_5 FOREIGN KEY (uid) REFERENCES users (uid),
+  CONSTRAINT FK_Reference_6 FOREIGN KEY (addressId) REFERENCES address (addressId)
+);
+-- 添加数据
+INSERT INTO xmorder VALUES ('abcd111222333444777888999000wwww', 1, 1, 9996.00, '尽快送到', '待发货', DEFAULT);
+
+-- 订单明细表
+CREATE TABLE orderdetail (
+  odid int NOT NULL AUTO_INCREMENT,
+  oid char(32) DEFAULT NULL,
+  pid int DEFAULT NULL,
+  pnumber int DEFAULT NULL,
+  ptotal double(10,2) DEFAULT NULL,
+  PRIMARY KEY (odid),
+  KEY FK_Reference_7 (oid),
+  KEY FK_Reference_8 (pid),
+  CONSTRAINT FK_Reference_8 FOREIGN KEY (pid) REFERENCES product_info (p_id),
+  CONSTRAINT FK_Reference_9 FOREIGN KEY (oid) REFERENCES xmorder (oid)
+);
+-- 添加数据
+INSERT INTO orderdetail VALUES (1, 'abcd111222333444777888999000wwww', 1, 2, 9996.00);
+
+
+--分页记录
+SELECT * FROM myusers limit  6,3;
+
+
+
+SELECT * FROM admin;
+SELECT * FROM orderdetail;
